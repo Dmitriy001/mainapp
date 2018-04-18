@@ -18,8 +18,8 @@ class App extends Component {
 
                 const [hash, ...items] = response;
                 console.log(items);
-                this.setState({hash: hash,
-                    items: items
+                this.setState({hash,
+                    items
                 });
             })
             .catch(function (error) {
@@ -41,14 +41,16 @@ class Table extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            counter: 50
+            counter: 50,
+            items: this.props.items,
+            sortIndex: null
         }
     }
 
     handleClickPrev() {
         if (this.state.counter%50 !== 0) {
             this.setState({
-                counter: this.state.counter - this.state.counter%50
+                counter: this.state.counter - 50
             })
         }
         else if(this.state.counter>50) {
@@ -64,26 +66,52 @@ class Table extends Component {
 
         if (l-count <= 50 && l-count > 0) {
             this.setState({
-                counter: l
+                counter: count+50
             })
         } else if (l > count) {
             this.setState({
                 counter: count + 50
             })
         }
-// must be disable
     }
 
-    hendleLink(e) {
+    sortItemsBy(e) {
         e.preventDefault();
-        
+        let sortItems = this.state.items.slice(this.state.counter-50, this.state.counter);
+        const sortindex = parseInt(e.target.dataset.sortindex);
+        if (this.state.sortIndex === null || sortItems[0][sortindex] > sortItems[sortItems.length-1][sortindex]) {
+            sortItems.sort((a,b) => {
+                if (a[sortindex] === b[sortindex]) {
+                    return 0
+                }
+                return a[sortindex] > b[sortindex] ? 1 : -1
+            });
+        } else {
+            sortItems.sort((a,b) => {
+                if (a[sortindex] === b[sortindex]) {
+                    return 0
+                }
+                return a[sortindex] > b[sortindex] ? -1 : 1
+            });
+        }
+
+
+        let itemsFirstPart = this.state.items.slice(0, this.state.counter-50);
+        let itemsSecondPart = this.state.items.slice(this.state.counter);
+        let a = itemsFirstPart.concat(sortItems);
+        let b = a.concat(itemsSecondPart);
+        this.setState({
+            items: b,
+            sortIndex: sortindex
+        })
     }
 
     render() {
-        const items = this.props.items;
+        const items = this.state.items;
         const hash = this.props.hash;
         let rows = [];
-        for (let i=this.state.counter -50; i < this.state.counter; i++) {
+        for (let i = this.state.counter - 50; i < this.state.counter; i++) {
+            if (items[i] === undefined) break;
             rows.push(
                 <tr key={items[i].toString()}>
                     <td>{items[i][0]}</td>
@@ -105,10 +133,10 @@ class Table extends Component {
                 <table>
                     <thead>
                         <tr>
-                            <th><a>{hash.id}</a></th>
-                            <th><a>{hash.name}</a></th>
-                            <th><a>{hash.price}</a></th>
-                            <th><a href='/' onClick={this.hendleLink}>{hash.quantity}</a></th>
+                            <th><a href='/' data-sortindex='0' onClick={this.sortItemsBy.bind(this)}>{hash.id}</a></th>
+                            <th><a href='/' data-sortindex='1' onClick={this.sortItemsBy.bind(this)}>{hash.name}</a></th>
+                            <th><a href='/' data-sortindex='2' onClick={this.sortItemsBy.bind(this)}>{hash.price}</a></th>
+                            <th><a href='/' data-sortindex='3' onClick={this.sortItemsBy.bind(this)}>{hash.quantity}</a></th>
                         </tr>
                     </thead>
                     <tbody>
