@@ -74,6 +74,11 @@ class Table extends Component {
 // must be disable
     }
 
+    hendleLink(e) {
+        e.preventDefault();
+        
+    }
+
     render() {
         const items = this.props.items;
         const hash = this.props.hash;
@@ -100,10 +105,10 @@ class Table extends Component {
                 <table>
                     <thead>
                         <tr>
-                            <th>{hash.id}</th>
-                            <th>{hash.name}</th>
-                            <th>{hash.price}</th>
-                            <th>{hash.quantity}</th>
+                            <th><a>{hash.id}</a></th>
+                            <th><a>{hash.name}</a></th>
+                            <th><a>{hash.price}</a></th>
+                            <th><a href='/' onClick={this.hendleLink}>{hash.quantity}</a></th>
                         </tr>
                     </thead>
                     <tbody>
