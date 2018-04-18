@@ -8,13 +8,16 @@ class App extends Component {
         this.state = {
         }
     }
+
     componentDidMount() {
         axios.get('http://localhost:3000/data')
             .then((response)=> {
                 return response.data
             })
             .then((response)=>{
+
                 const [hash, ...items] = response;
+                console.log(items);
                 this.setState({hash: hash,
                     items: items
                 });
@@ -40,11 +43,15 @@ class Table extends Component {
         this.state = {
             counter: 50
         }
-
     }
 
     handleClickPrev() {
-        if(this.state.counter>50) {
+        if (this.state.counter%50 !== 0) {
+            this.setState({
+                counter: this.state.counter - this.state.counter%50
+            })
+        }
+        else if(this.state.counter>50) {
             this.setState({
                 counter: this.state.counter-50
             })
@@ -54,7 +61,6 @@ class Table extends Component {
     handleClickNext(){
         let l = this.props.items.length;
         let count = this.state.counter;
-        console.log(this.state.counter);
 
         if (l-count <= 50 && l-count > 0) {
             this.setState({
@@ -67,7 +73,6 @@ class Table extends Component {
         }
 // must be disable
     }
-
 
     render() {
         const items = this.props.items;
