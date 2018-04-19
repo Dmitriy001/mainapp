@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import DemoComponent from "./DemoComponent";
 
 class Table extends Component {
     constructor(props) {
@@ -6,7 +7,8 @@ class Table extends Component {
         this.state = {
             items: this.props.items,
             sortIndex: null,
-            resetButton: false
+            resetButton: false,
+            anotherData: false
         }
     }
 
@@ -43,6 +45,10 @@ class Table extends Component {
 
     filterItemsBy = (event) => {
         if (event.which === 13 || event.keyCode === 13) {
+            if (!event.target.value) {
+                alert('Please try again');
+                return
+            }
             let value = event.target.value;
             event.target.value='';
             let filterItems = this.state.items;
@@ -67,6 +73,12 @@ class Table extends Component {
         this.setState({
             items: this.props.items,
             resetButton: false
+        })
+    };
+
+    createAnotherData = () => {
+        this.setState({
+            anotherData: true
         })
     };
 
@@ -96,6 +108,8 @@ class Table extends Component {
                     {rows}
                     </tbody>
                 </table>
+                <input type='button' value='create another table' onClick={this.createAnotherData}/>
+                {this.state.anotherData && <DemoComponent/>}
             </div>
         )
     }

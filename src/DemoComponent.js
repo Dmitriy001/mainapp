@@ -8,27 +8,47 @@ class DemoComponent extends Component{
         }
     }
 
-    handleClick = (e) => {
+    handleClick = (event) => {
         this.setState({
-            data: e.target.name
+            data: event.target.name
         })
     };
 
+    handleChange = (event) => {
+        if (event.which === 13 || event.keyCode === 13) {
+            if (!event.target.value) {
+                alert('Please try again');
+                return
+            }
+            this.setState({
+                data: 'data?id=' + event.target.value
+            })
+        }
+    };
+
+    createAnotherData = () => {
+        this.setState({
+            data: null
+        })
+    };
     render() {
         return (
             <div className='DemoComponent'>
+
                 <div className="buttons" style={{display: this.state.data ? 'none': ''}}>
                     Please choose :
-                    <input value='small data' name='data' type='button' onClick={this.handleClick}/>
+                    <input value='small data' name='smalldata' type='button' onClick={this.handleClick}/>
                     <input value='big data' name='bigdata' type='button' onClick={this.handleClick}/>
                     <p>
-                        <form >
-                            <input placeholder='create own data' />
-                            <input type='submit' value='submit'/>
-                        </form>
+                        <input placeholder='input own data and press enter' onKeyPress={this.handleChange}
+                        style={{width: 200}}/>
                     </p>
                 </div>
-                {this.state.data && <GetResponseApp data={this.state.data}/>}
+                {this.state.data &&
+                <div>
+
+                    <GetResponseApp data={this.state.data}/>
+                </div>}
             </div>
         )
     }

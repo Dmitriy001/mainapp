@@ -13,10 +13,10 @@ class GetResponseApp extends Component {
 
     componentDidMount() {
         axios.get(`http://localhost:3000/${this.props.data}`)
-            .then((response)=> {
+            .then((response) => {
                 return response.data
             })
-            .then((response)=>{
+            .then((response) => {
                 const [headTable, ...items] = response;
                 this.setState({headTable,
                     items
@@ -36,10 +36,12 @@ class GetResponseApp extends Component {
     }
 }
 
+const PAGESIZE = 50;
+
 class MainApp extends Component {
     constructor(props) {
         super(props);
-        let arr = this.props.items.slice(0, 50);
+        let arr = this.props.items.slice(0, PAGESIZE);
         this.state = {
             currentPageItems: arr,
             currentIndex: 0
@@ -47,24 +49,24 @@ class MainApp extends Component {
     }
 
     handleClickPrev = () => {
-        let currentIndex = this.state.currentIndex-50;
-        if (currentIndex>0) {
+        let currentIndex = this.state.currentIndex-PAGESIZE;
+        if (currentIndex>=0) {
             this.setState({
-                currentPageItems: this.props.items.slice(currentIndex,currentIndex+50),
+                currentPageItems: this.props.items.slice(currentIndex,currentIndex+PAGESIZE),
                 currentIndex
             })
         }
     };
 
     handleClickNext = () => {
-        let currentIndex = this.state.currentIndex+50;
-        let value = this.props.items.length-currentIndex+50;
-        if (value < 50) {
+        let currentIndex = this.state.currentIndex+PAGESIZE;
+        let value = this.props.items.length-currentIndex+PAGESIZE;
+        if (value <= PAGESIZE) {
             return;
         }
         if (currentIndex < this.props.items.length) {
             this.setState({
-                currentPageItems: this.props.items.slice(currentIndex,currentIndex+50),
+                currentPageItems: this.props.items.slice(currentIndex,currentIndex+PAGESIZE),
                 currentIndex
             })
         } else if (currentIndex + 50 > this.props.items.length){
@@ -79,10 +81,10 @@ class MainApp extends Component {
         return(
             <div className='MainApp'>
                 <button onClick={this.handleClickPrev}>
-                    Prev
+                    Prev page
                 </button>
                 <button onClick={this.handleClickNext}>
-                    Next
+                    Next page
                 </button>
                 <Table items={this.state.currentPageItems} headTable={this.props.headTable}/>
             </div>
