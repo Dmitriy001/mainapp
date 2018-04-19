@@ -16,7 +16,7 @@ class Table extends Component {
         })
     }
 
-    sortItemsBy(e) {
+    sortItemsBy = (e) => {
         e.preventDefault();
         let sortItems = this.state.items;
         const sortindex = +e.target.dataset.sortindex;
@@ -39,9 +39,9 @@ class Table extends Component {
             items: sortItems,
             sortIndex: sortindex
         })
-    }
+    };
 
-    filterItemsBy(event) {
+    filterItemsBy = (event) => {
         if (event.which === 13 || event.keyCode === 13) {
             let value = event.target.value;
             event.target.value='';
@@ -61,14 +61,14 @@ class Table extends Component {
                 resetButton: true
             })
         }
-    }
+    };
 
-    resetFilter() {
+    resetFilter = () => {
         this.setState({
             items: this.props.items,
             resetButton: false
         })
-    }
+    };
 
     render() {
         let rows = this.state.items.map((item)=>
@@ -81,15 +81,15 @@ class Table extends Component {
         );
         return(
             <div className='Table'>
-                <input type='text' placeholder='filter' onKeyPress={this.filterItemsBy.bind(this)}/>
-                {this.state.resetButton && <input value='reset filter' type="button" onClick={this.resetFilter.bind(this)}/>}
+                <input type='text' placeholder='filter' onKeyPress={this.filterItemsBy}/>
+                {this.state.resetButton && <input value='reset filter' type="button" onClick={this.resetFilter}/>}
                 <table>
                     <thead>
                     <tr>
-                        <th><a href='/' data-sortindex='0' onClick={this.sortItemsBy.bind(this)}>{this.props.headTable.id}</a></th>
-                        <th><a href='/' data-sortindex='1' onClick={this.sortItemsBy.bind(this)}>{this.props.headTable.name}</a></th>
-                        <th><a href='/' data-sortindex='2' onClick={this.sortItemsBy.bind(this)}>{this.props.headTable.price}</a></th>
-                        <th><a href='/' data-sortindex='3' onClick={this.sortItemsBy.bind(this)}>{this.props.headTable.quantity}</a></th>
+                        <th><a href='/' data-sortindex='0' onClick={this.sortItemsBy}>{this.props.headTable.id}</a></th>
+                        <th><a href='/' data-sortindex='1' onClick={this.sortItemsBy}>{this.props.headTable.name}</a></th>
+                        <th><a href='/' data-sortindex='2' onClick={this.sortItemsBy}>{this.props.headTable.price}</a></th>
+                        <th><a href='/' data-sortindex='3' onClick={this.sortItemsBy}>{this.props.headTable.quantity}</a></th>
                     </tr>
                     </thead>
                     <tbody>

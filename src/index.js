@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import GetResponseApp from './App';
+import DemoComponent from './DemoComponent';
 
 
 
-ReactDOM.render(<GetResponseApp />, document.getElementById('root'));
+ReactDOM.render(<DemoComponent />, document.getElementById('root'));

@@ -5,14 +5,14 @@ import './App.css';
 
 
 class GetResponseApp extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
         }
     }
 
     componentDidMount() {
-        axios.get('http://localhost:3000/data')
+        axios.get(`http://localhost:3000/${this.props.data}`)
             .then((response)=> {
                 return response.data
             })
@@ -36,8 +36,6 @@ class GetResponseApp extends Component {
     }
 }
 
-
-
 class MainApp extends Component {
     constructor(props) {
         super(props);
@@ -48,7 +46,7 @@ class MainApp extends Component {
         }
     }
 
-    handleClickPrev() {
+    handleClickPrev = () => {
         let currentIndex = this.state.currentIndex-50;
         if (currentIndex>0) {
             this.setState({
@@ -56,9 +54,9 @@ class MainApp extends Component {
                 currentIndex
             })
         }
-    }
+    };
 
-    handleClickNext(){
+    handleClickNext = () => {
         let currentIndex = this.state.currentIndex+50;
         let value = this.props.items.length-currentIndex+50;
         if (value < 50) {
@@ -75,15 +73,15 @@ class MainApp extends Component {
                 currentIndex: this.state.currentIndex+value
             });
         }
-    }
+    };
 
     render() {
         return(
             <div className='MainApp'>
-                <button onClick={this.handleClickPrev.bind(this)}>
+                <button onClick={this.handleClickPrev}>
                     Prev
                 </button>
-                <button onClick={this.handleClickNext.bind(this)}>
+                <button onClick={this.handleClickNext}>
                     Next
                 </button>
                 <Table items={this.state.currentPageItems} headTable={this.props.headTable}/>
@@ -91,9 +89,5 @@ class MainApp extends Component {
         )
     }
 }
-
-
-
-
 
 export default GetResponseApp
