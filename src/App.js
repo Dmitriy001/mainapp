@@ -15,9 +15,7 @@ class App extends Component {
                 return response.data
             })
             .then((response)=>{
-
                 const [hash, ...items] = response;
-                console.log(items);
                 this.setState({hash,
                     items
                 });
@@ -30,11 +28,13 @@ class App extends Component {
     render() {
         return (
             <div className="App">
-                {this.state.items ? <Table hash={this.state.hash} items={this.state.items}/> : ''}
+                {this.state.items && <Table hash={this.state.hash} items={this.state.items}/>}
             </div>
         );
     }
 }
+
+
 
 
 class Table extends Component {
@@ -48,14 +48,14 @@ class Table extends Component {
     }
 
     handleClickPrev() {
-        if (this.state.counter%50 !== 0) {
+        if (this.state.counter % 50 !== 0) {
             this.setState({
                 counter: this.state.counter - 50
             })
         }
-        else if(this.state.counter>50) {
+        else if(this.state.counter > 50) {
             this.setState({
-                counter: this.state.counter-50
+                counter: this.state.counter - 50
             })
         }
     }
@@ -78,7 +78,7 @@ class Table extends Component {
     sortItemsBy(e) {
         e.preventDefault();
         let sortItems = this.state.items.slice(this.state.counter-50, this.state.counter);
-        const sortindex = parseInt(e.target.dataset.sortindex);
+        const sortindex = +e.target.dataset.sortindex;
         if (this.state.sortIndex === null || sortItems[0][sortindex] > sortItems[sortItems.length-1][sortindex]) {
             sortItems.sort((a,b) => {
                 if (a[sortindex] === b[sortindex]) {
@@ -106,6 +106,34 @@ class Table extends Component {
         })
     }
 
+    filterItemsBy(event) {
+        if (event.which === 13 || event.keyCode === 13) {
+
+            let value = event.target.value;
+            event.target.value='';
+            let filterItems = this.state.items.slice(this.state.counter-50, this.state.counter);
+            let filterList = filterItems.filter((elements) => {
+                let i = 0;
+                elements.forEach((element)=>{
+                    if (element.toString().indexOf(value)+1) {
+                        i++
+                    }
+                });
+                return i>0;
+            });
+
+            //must be separate method
+            let itemsFirstPart = this.state.items.slice(0, this.state.counter-50);
+            let itemsSecondPart = this.state.items.slice(this.state.counter);
+            let a = itemsFirstPart.concat(filterList);
+            let b = a.concat(itemsSecondPart);
+            this.setState({
+                items: b
+            })
+        }
+    }
+
+
     render() {
         const items = this.state.items;
         const hash = this.props.hash;
@@ -121,7 +149,6 @@ class Table extends Component {
                 </tr>
             )
         }
-
         return(
             <div>
                 <button onClick={this.handleClickPrev.bind(this)}>
@@ -130,6 +157,7 @@ class Table extends Component {
                 <button onClick={this.handleClickNext.bind(this)}>
                     Next
                 </button>
+                <input type='text' placeholder='filter' onKeyPress={this.filterItemsBy.bind(this)}/>
                 <table>
                     <thead>
                         <tr>
