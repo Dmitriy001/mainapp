@@ -26,11 +26,6 @@ class DemoComponent extends Component{
         }
     };
 
-    createAnotherData = () => {
-        this.setState({
-            data: null
-        })
-    };
     render() {
         return (
             <div className='DemoComponent'>

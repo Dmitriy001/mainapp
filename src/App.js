@@ -3,7 +3,6 @@ import axios from 'axios'
 import Table from './Table'
 import './App.css';
 
-
 class GetResponseApp extends Component {
     constructor(props) {
         super(props);
