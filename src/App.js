@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import axios from 'axios'
+import Table from './Table'
 import './App.css';
 
-class App extends Component {
+
+class GetResponseApp extends Component {
     constructor() {
         super();
         this.state = {
@@ -15,8 +17,8 @@ class App extends Component {
                 return response.data
             })
             .then((response)=>{
-                const [hash, ...items] = response;
-                this.setState({hash,
+                const [headTable, ...items] = response;
+                this.setState({headTable,
                     items
                 });
             })
@@ -27,8 +29,8 @@ class App extends Component {
 
     render() {
         return (
-            <div className="App">
-                {this.state.items && <Table hash={this.state.hash} items={this.state.items}/>}
+            <div>
+                {this.state.items && <MainApp headTable={this.state.headTable} items={this.state.items}/>}
             </div>
         );
     }
@@ -36,144 +38,62 @@ class App extends Component {
 
 
 
-
-class Table extends Component {
+class MainApp extends Component {
     constructor(props) {
         super(props);
+        let arr = this.props.items.slice(0, 50);
         this.state = {
-            counter: 50,
-            items: this.props.items,
-            sortIndex: null
+            currentPageItems: arr,
+            currentIndex: 0
         }
     }
 
     handleClickPrev() {
-        if (this.state.counter % 50 !== 0) {
+        let currentIndex = this.state.currentIndex-50;
+        if (currentIndex>0) {
             this.setState({
-                counter: this.state.counter - 50
-            })
-        }
-        else if(this.state.counter > 50) {
-            this.setState({
-                counter: this.state.counter - 50
+                currentPageItems: this.props.items.slice(currentIndex,currentIndex+50),
+                currentIndex
             })
         }
     }
 
     handleClickNext(){
-        let l = this.props.items.length;
-        let count = this.state.counter;
-
-        if (l-count <= 50 && l-count > 0) {
-            this.setState({
-                counter: count+50
-            })
-        } else if (l > count) {
-            this.setState({
-                counter: count + 50
-            })
+        let currentIndex = this.state.currentIndex+50;
+        let value = this.props.items.length-currentIndex+50;
+        if (value < 50) {
+            return;
         }
-    }
-
-    sortItemsBy(e) {
-        e.preventDefault();
-        let sortItems = this.state.items.slice(this.state.counter-50, this.state.counter);
-        const sortindex = +e.target.dataset.sortindex;
-        if (this.state.sortIndex === null || sortItems[0][sortindex] > sortItems[sortItems.length-1][sortindex]) {
-            sortItems.sort((a,b) => {
-                if (a[sortindex] === b[sortindex]) {
-                    return 0
-                }
-                return a[sortindex] > b[sortindex] ? 1 : -1
-            });
-        } else {
-            sortItems.sort((a,b) => {
-                if (a[sortindex] === b[sortindex]) {
-                    return 0
-                }
-                return a[sortindex] > b[sortindex] ? -1 : 1
+        if (currentIndex < this.props.items.length) {
+            this.setState({
+                currentPageItems: this.props.items.slice(currentIndex,currentIndex+50),
+                currentIndex
+            })
+        } else if (currentIndex + 50 > this.props.items.length){
+            this.setState({
+                currentPageItems: this.props.items.slice(currentIndex,currentIndex+value),
+                currentIndex: this.state.currentIndex+value
             });
         }
-
-
-        let itemsFirstPart = this.state.items.slice(0, this.state.counter-50);
-        let itemsSecondPart = this.state.items.slice(this.state.counter);
-        let a = itemsFirstPart.concat(sortItems);
-        let b = a.concat(itemsSecondPart);
-        this.setState({
-            items: b,
-            sortIndex: sortindex
-        })
     }
-
-    filterItemsBy(event) {
-        if (event.which === 13 || event.keyCode === 13) {
-
-            let value = event.target.value;
-            event.target.value='';
-            let filterItems = this.state.items.slice(this.state.counter-50, this.state.counter);
-            let filterList = filterItems.filter((elements) => {
-                let i = 0;
-                elements.forEach((element)=>{
-                    if (element.toString().indexOf(value)+1) {
-                        i++
-                    }
-                });
-                return i>0;
-            });
-
-            //must be separate method
-            let itemsFirstPart = this.state.items.slice(0, this.state.counter-50);
-            let itemsSecondPart = this.state.items.slice(this.state.counter);
-            let a = itemsFirstPart.concat(filterList);
-            let b = a.concat(itemsSecondPart);
-            this.setState({
-                items: b
-            })
-        }
-    }
-
 
     render() {
-        const items = this.state.items;
-        const hash = this.props.hash;
-        let rows = [];
-        for (let i = this.state.counter - 50; i < this.state.counter; i++) {
-            if (items[i] === undefined) break;
-            rows.push(
-                <tr key={items[i].toString()}>
-                    <td>{items[i][0]}</td>
-                    <td>{items[i][1]}</td>
-                    <td>{items[i][2]}</td>
-                    <td>{items[i][3].toString()}</td>
-                </tr>
-            )
-        }
         return(
-            <div>
+            <div className='MainApp'>
                 <button onClick={this.handleClickPrev.bind(this)}>
                     Prev
                 </button>
                 <button onClick={this.handleClickNext.bind(this)}>
                     Next
                 </button>
-                <input type='text' placeholder='filter' onKeyPress={this.filterItemsBy.bind(this)}/>
-                <table>
-                    <thead>
-                        <tr>
-                            <th><a href='/' data-sortindex='0' onClick={this.sortItemsBy.bind(this)}>{hash.id}</a></th>
-                            <th><a href='/' data-sortindex='1' onClick={this.sortItemsBy.bind(this)}>{hash.name}</a></th>
-                            <th><a href='/' data-sortindex='2' onClick={this.sortItemsBy.bind(this)}>{hash.price}</a></th>
-                            <th><a href='/' data-sortindex='3' onClick={this.sortItemsBy.bind(this)}>{hash.quantity}</a></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {rows}
-                    </tbody>
-                </table>
+                <Table items={this.state.currentPageItems} headTable={this.props.headTable}/>
             </div>
         )
     }
 }
 
-export default App
+
+
+
+
+export default GetResponseApp
