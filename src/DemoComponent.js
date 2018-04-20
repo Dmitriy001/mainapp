@@ -41,7 +41,6 @@ class DemoComponent extends Component{
                 </div>
                 {this.state.data &&
                 <div>
-
                     <GetResponseApp data={this.state.data}/>
                 </div>}
             </div>
